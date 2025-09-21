@@ -58,7 +58,6 @@
     "react-big-calendar": "^1.19.4",
     "react-day-picker": "^9.9.0",
     "react-dom": "^19.1.0",
-    "react-gantt-timeline": "^0.4.3",
     "react-hook-form": "^7.56.3",
     "react-hot-toast": "^2.6.0",
     "react-resizable-panels": "^3.0.2",
