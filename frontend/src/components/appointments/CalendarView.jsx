@@ -266,6 +266,10 @@ const CalendarView = ({
         .rbc-toolbar {
           margin-bottom: 16px;
           padding: 0;
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 8px;
         }
         
         .rbc-toolbar button {

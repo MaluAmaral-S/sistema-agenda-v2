@@ -259,32 +259,34 @@ const GanttView = ({
             </p>
           </div>
         ) : (
-          <div className="gantt-container">
-            {/* Cabeçalho da timeline */}
-            {renderTimelineHeader()}
-            
-            {/* Área dos agendamentos */}
-            <div 
-              className="relative bg-gray-50 border border-gray-200 rounded-b-lg"
-              style={{ 
-                height: `${Math.max(200, filteredAppointments.length * 40 + 20)}px`,
-                minHeight: '200px'
-              }}
-            >
-              {/* Grid de fundo */}
-              <div className="absolute inset-0 flex">
-                {timelineData.timeSlots.map((_, index) => (
-                  <div 
-                    key={index}
-                    className="flex-1 border-r border-gray-200 last:border-r-0"
-                  />
-                ))}
-              </div>
+          <div className="w-full overflow-x-auto rounded-lg border">
+            <div className="gantt-container" style={{ minWidth: viewMode === 'day' ? '1200px' : '600px' }}>
+              {/* Cabeçalho da timeline */}
+              {renderTimelineHeader()}
               
-              {/* Barras de agendamentos */}
-              {filteredAppointments.map((appointment, index) => 
-                renderAppointmentBar(appointment, index)
-              )}
+              {/* Área dos agendamentos */}
+              <div
+                className="relative bg-gray-50 rounded-b-lg"
+                style={{
+                  height: `${Math.max(200, filteredAppointments.length * 40 + 20)}px`,
+                  minHeight: '200px'
+                }}
+              >
+                {/* Grid de fundo */}
+                <div className="absolute inset-0 flex">
+                  {timelineData.timeSlots.map((_, index) => (
+                    <div
+                      key={index}
+                      className="flex-1 border-r border-gray-200 last:border-r-0"
+                    />
+                  ))}
+                </div>
+
+                {/* Barras de agendamentos */}
+                {filteredAppointments.map((appointment, index) =>
+                  renderAppointmentBar(appointment, index)
+                )}
+              </div>
             </div>
           </div>
         )}
