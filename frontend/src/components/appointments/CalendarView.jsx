@@ -162,9 +162,9 @@ const CalendarView = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center justify-between">
-          <span>Calendário de Agendamentos</span>
-          <div className="flex items-center space-x-4 text-sm">
+        <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:items-center sm:justify-between">
+          <CardTitle>Calendário de Agendamentos</CardTitle>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
             <div className="flex items-center space-x-1">
               <div className="w-3 h-3 bg-yellow-500 rounded"></div>
               <span>Pendente</span>
@@ -182,7 +182,7 @@ const CalendarView = ({
               <span>Reagendado</span>
             </div>
           </div>
-        </CardTitle>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="calendar-container" style={{ height: '600px' }}>

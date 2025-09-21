@@ -176,10 +176,10 @@ const GanttView = ({
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:items-center sm:justify-between">
           <CardTitle>Gráfico de Gantt - Agendamentos</CardTitle>
           
-          <div className="flex items-center space-x-4">
+          <div className="flex flex-col space-y-2 md:flex-row md:space-y-0 md:items-center md:space-x-4">
             {/* Controles de navegação */}
             <div className="flex items-center space-x-2">
               <Button
@@ -227,7 +227,7 @@ const GanttView = ({
         </div>
         
         {/* Legenda */}
-        <div className="flex items-center space-x-4 text-sm">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm pt-4">
           <div className="flex items-center space-x-1">
             <div className="w-3 h-3 bg-yellow-500 rounded"></div>
             <span>Pendente</span>
