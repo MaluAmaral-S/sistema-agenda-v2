@@ -1,12 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import OnboardingBusinessHours from '../components/onboarding/OnboardingBusinessHours';
 import OnboardingServices from '../components/onboarding/OnboardingServices';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -19,30 +17,34 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { apiRequest } from '../services/api';
-import { Clock, Calendar, Building2, Check } from 'lucide-react';
+import { Clock, Calendar, Check } from 'lucide-react';
 import { toast } from 'sonner';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const PrimeirosPassos = () => {
   const [step, setStep] = useState(1);
   const navigate = useNavigate();
   const { user, checkAuth } = useAuth();
   const [businessHours, setBusinessHours] = useState({});
-  const [businessData, setBusinessData] = useState({
-    businessName: user?.businessName || '',
-    email: user?.email || '',
-    phone: user?.phone || '',
-  });
   const [isSaving, setIsSaving] = useState(false);
+  const [headerText, setHeaderText] = useState({
+    title: `Bem-vindo(a), ${user?.name || 'Empreendedor(a)'}!`,
+    subtitle: 'Vamos configurar sua conta. Siga os passos para deixar tudo pronto para seus clientes.'
+  });
 
   useEffect(() => {
-    if (user) {
-        setBusinessData({
-            businessName: user.businessName || '',
-            email: user.email || '',
-            phone: user.phone || '',
-        });
+    if (step === 1) {
+      setHeaderText({
+        title: 'Configure seus Horários',
+        subtitle: 'Defina os dias e horários em que seu negócio estará aberto para agendamentos.'
+      });
+    } else if (step === 2) {
+      setHeaderText({
+        title: 'Adicione seus Serviços',
+        subtitle: 'Cadastre os serviços que você oferece para que seus clientes possam agendar.'
+      });
     }
-  }, [user]);
+  }, [step]);
 
   useEffect(() => {
     if (user?.onboardingCompleted) {
@@ -85,8 +87,6 @@ const PrimeirosPassos = () => {
       } finally {
         setIsSaving(false);
       }
-    } else if (step < 3) {
-      setStep(step + 1);
     }
   };
 
@@ -112,16 +112,11 @@ const PrimeirosPassos = () => {
   };
 
   const handleFinish = async () => {
+    // Services are saved within the OnboardingServices component
+    // So we just need to mark onboarding as complete.
     setIsSaving(true);
-    try {
-      await apiRequest.patch('/profile', businessData);
-      toast.success('Dados da empresa salvos com sucesso!');
-      await completeOnboarding();
-    } catch (error) {
-      toast.error('Não foi possível salvar os dados da empresa.');
-    } finally {
-      setIsSaving(false);
-    }
+    await completeOnboarding();
+    setIsSaving(false);
   };
 
   const renderStepContent = () => {
@@ -138,26 +133,6 @@ const PrimeirosPassos = () => {
             <div>
                 <p className="mb-4 text-gray-600">Adicione os serviços que você oferece. A 'duração' é muito importante, pois nosso sistema a usará para evitar que clientes marquem horários conflitantes.</p>
                 <OnboardingServices />
-            </div>
-        );
-      case 3:
-        return (
-            <div>
-                <p className="mb-4 text-gray-600">Revise os dados do seu negócio. O 'Nome da Empresa' será exibido para seus clientes na página de agendamento. O e-mail e o WhatsApp serão usados para comunicação.</p>
-                <div className="space-y-4">
-                    <div>
-                        <Label htmlFor="businessName" className="mb-2 block">Nome da Empresa</Label>
-                        <Input id="businessName" value={businessData.businessName} onChange={(e) => setBusinessData({...businessData, businessName: e.target.value})} />
-                    </div>
-                    <div>
-                        <Label htmlFor="email" className="mb-2 block">E-mail de Contato</Label>
-                        <Input id="email" type="email" value={businessData.email} onChange={(e) => setBusinessData({...businessData, email: e.target.value})} />
-                    </div>
-                    <div>
-                        <Label htmlFor="whatsapp" className="mb-2 block">Número de WhatsApp</Label>
-                        <Input id="whatsapp" type="tel" value={businessData.phone} onChange={(e) => setBusinessData({...businessData, phone: e.target.value})} />
-                    </div>
-                </div>
             </div>
         );
       default:
@@ -179,20 +154,23 @@ const PrimeirosPassos = () => {
             {[
               { step: 1, icon: <Clock className="w-5 h-5" />, label: 'Horários' },
               { step: 2, icon: <Calendar className="w-5 h-5" />, label: 'Serviços' },
-              { step: 3, icon: <Building2 className="w-5 h-5" />, label: 'Sua Empresa' }
             ].map(({ step: s, icon, label }) => (
               <React.Fragment key={s}>
                 <div className="flex flex-col items-center">
-                    <div className={`flex items-center justify-center w-12 h-12 rounded-full transition-all duration-300 ${
-                    step === s ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white scale-110 shadow-lg' :
-                    step > s ? 'bg-gradient-to-r from-green-500 to-green-600 text-white' :
-                    'bg-gray-200 text-gray-500'
-                    }`}>
-                    {step > s ? <Check className="w-6 h-6" /> : icon}
-                    </div>
+                    <motion.div
+                      className={`flex items-center justify-center w-12 h-12 rounded-full transition-colors duration-300 ${
+                        step > s ? 'bg-gradient-to-r from-green-500 to-green-600 text-white' :
+                        step === s ? 'bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-lg' :
+                        'bg-gray-200 text-gray-500'
+                      }`}
+                      animate={{ scale: step === s ? 1.1 : 1 }}
+                      transition={{ type: 'spring', stiffness: 300, damping: 10 }}
+                    >
+                      {step > s ? <Check className="w-6 h-6" /> : icon}
+                    </motion.div>
                     <p className={`mt-2 text-sm font-medium ${step === s ? 'text-purple-600' : 'text-gray-500'}`}>{label}</p>
                 </div>
-                {s < 3 && (
+                {s < 2 && (
                   <div className={`flex-1 h-1 mx-4 rounded ${step > s ? 'bg-green-500' : 'bg-gray-200'}`}></div>
                 )}
               </React.Fragment>
@@ -203,15 +181,25 @@ const PrimeirosPassos = () => {
 
       <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-800">Bem-vindo(a), {user?.name || 'Empreendedor(a)'}!</h2>
-          <p className="text-lg text-gray-600 mt-2">Vamos configurar sua conta. Siga os passos para deixar tudo pronto para seus clientes.</p>
+          <motion.h2 initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} key={headerText.title} className="text-3xl font-bold text-gray-800">{headerText.title}</motion.h2>
+          <motion.p initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} key={headerText.subtitle} className="text-lg text-gray-600 mt-2">{headerText.subtitle}</motion.p>
         </div>
 
-        <Card className="w-full">
-          <CardContent className="p-8">
-            {renderStepContent()}
-          </CardContent>
-        </Card>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={step}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Card className="w-full">
+              <CardContent className="p-8">
+                {renderStepContent()}
+              </CardContent>
+            </Card>
+          </motion.div>
+        </AnimatePresence>
 
         <div className="flex items-center justify-between mt-12">
           <div>
@@ -243,14 +231,14 @@ const PrimeirosPassos = () => {
           </div>
 
           <div>
-            {step < 3 && (
+            {step < 2 && (
               <Button onClick={handleNext} disabled={isSaving} className="bg-purple-600 hover:bg-purple-700">
                 {isSaving ? "Salvando..." : "Próximo"}
               </Button>
             )}
-            {step === 3 && (
+            {step === 2 && (
               <Button onClick={handleFinish} disabled={isSaving} className="bg-purple-600 hover:bg-purple-700">
-                {isSaving ? "Salvando..." : "Finalizar e ir para o Painel"}
+                {isSaving ? "Finalizando..." : "Finalizar e ir para o Painel"}
               </Button>
             )}
           </div>
