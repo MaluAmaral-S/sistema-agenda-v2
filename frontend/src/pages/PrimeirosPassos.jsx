@@ -24,7 +24,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 const PrimeirosPassos = () => {
   const [step, setStep] = useState(1);
   const navigate = useNavigate();
-  const { user, checkAuth } = useAuth();
+  const { user, checkAuth, updateUser } = useAuth();
   const [businessHours, setBusinessHours] = useState({});
   const [isSaving, setIsSaving] = useState(false);
   const [headerText, setHeaderText] = useState({
@@ -99,8 +99,8 @@ const PrimeirosPassos = () => {
   const completeOnboarding = async () => {
     try {
       await apiRequest.post('/auth/onboarding/complete');
-      await checkAuth(); // Refresh user state
-      navigate('/painel');
+      updateUser({ onboardingCompleted: true });
+      // A navegação será tratada pelo useEffect que observa user.onboardingCompleted
     } catch (error) {
       console.error('Erro ao finalizar o onboarding:', error);
       toast.error('Não foi possível finalizar a configuração.');
@@ -221,7 +221,7 @@ const PrimeirosPassos = () => {
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Voltar</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleSkip}>Pular</AlertDialogAction>
+                    <AlertDialogAction onClick={handleSkip} className="bg-purple-600 hover:bg-purple-700 text-white">Pular</AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>

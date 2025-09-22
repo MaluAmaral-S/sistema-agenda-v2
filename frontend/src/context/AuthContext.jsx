@@ -101,33 +101,33 @@ const AuthContext = createContext();
 // Provider do contexto
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, initialState);
-  
+
+  const checkAuth = async () => {
+    try {
+      dispatch({ type: AUTH_ACTIONS.SET_LOADING, payload: true });
+
+      if (authService.isAuthenticated()) {
+        const user = authService.getCurrentUser();
+        
+        // Verificar se o token não está expirado
+        const isValid = await authService.refreshTokenIfNeeded();
+
+        if (isValid && user) {
+          dispatch({ type: AUTH_ACTIONS.SET_USER, payload: user });
+        } else {
+          dispatch({ type: AUTH_ACTIONS.LOGOUT });
+        }
+      } else {
+        dispatch({ type: AUTH_ACTIONS.SET_LOADING, payload: false });
+      }
+    } catch (error) {
+      console.error('Erro ao verificar autenticação:', error);
+      dispatch({ type: AUTH_ACTIONS.LOGOUT });
+    }
+  };
+
   // Verificar autenticação ao carregar a aplicação
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        dispatch({ type: AUTH_ACTIONS.SET_LOADING, payload: true });
-        
-        if (authService.isAuthenticated()) {
-          const user = authService.getCurrentUser();
-          
-          // Verificar se o token não está expirado
-          const isValid = await authService.refreshTokenIfNeeded();
-          
-          if (isValid && user) {
-            dispatch({ type: AUTH_ACTIONS.SET_USER, payload: user });
-          } else {
-            dispatch({ type: AUTH_ACTIONS.LOGOUT });
-          }
-        } else {
-          dispatch({ type: AUTH_ACTIONS.SET_LOADING, payload: false });
-        }
-      } catch (error) {
-        console.error('Erro ao verificar autenticação:', error);
-        dispatch({ type: AUTH_ACTIONS.LOGOUT });
-      }
-    };
-    
     checkAuth();
   }, []);
   
@@ -241,7 +241,8 @@ export const AuthProvider = ({ children }) => {
     verifyCode,
     resetPassword,
     updateUser,
-    clearError
+    clearError,
+    checkAuth
   };
   
   return (
