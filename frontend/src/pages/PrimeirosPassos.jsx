@@ -1,6 +1,6 @@
-import React, { useState, useContext, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
+import { useAuth } from '../context/AuthContext';
 import { Button } from '@/components/ui/button';
 import BusinessHoursForm from '../components/onboarding/BusinessHoursForm';
 import AddServiceForm from '../components/onboarding/AddServiceForm';
@@ -20,7 +20,7 @@ const PrimeirosPassos = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [showSkipModal, setShowSkipModal] = useState(false);
   const navigate = useNavigate();
-  const { user } = useContext(AuthContext);
+  const { user } = useAuth();
   const businessHoursFormRef = useRef();
   const addServiceFormRef = useRef();
 

@@ -16,6 +16,10 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false,
   },
+    onboardingCompleted: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+    },
   email: {
     type: DataTypes.STRING,
     allowNull: false,
