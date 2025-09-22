@@ -44,7 +44,7 @@ const PrimeirosPassos = () => {
         subtitle: 'Cadastre os serviços que você oferece para que seus clientes possam agendar.'
       });
     }
-  }, [step]);
+  }, [step, user]);
 
   useEffect(() => {
     if (user?.onboardingCompleted) {
@@ -98,7 +98,7 @@ const PrimeirosPassos = () => {
 
   const completeOnboarding = async () => {
     try {
-      await apiRequest.post('/onboarding/complete');
+      await apiRequest.post('/auth/onboarding/complete');
       await checkAuth(); // Refresh user state
       navigate('/painel');
     } catch (error) {
@@ -112,8 +112,6 @@ const PrimeirosPassos = () => {
   };
 
   const handleFinish = async () => {
-    // Services are saved within the OnboardingServices component
-    // So we just need to mark onboarding as complete.
     setIsSaving(true);
     await completeOnboarding();
     setIsSaving(false);
