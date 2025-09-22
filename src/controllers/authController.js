@@ -127,9 +127,38 @@ exports.getProfile = async (req, res) => {
             name: req.user.name,
             email: req.user.email,
             businessName: req.user.businessName,
+            phone: req.user.phone,
         });
     } else {
         res.status(404).json({ message: 'Usuário não encontrado.' });
+    }
+};
+
+exports.updateProfile = async (req, res) => {
+    try {
+        const user = await User.findByPk(req.user.id);
+        if (!user) {
+            return res.status(404).json({ message: 'Usuário não encontrado.' });
+        }
+
+        const { businessName, email, phone } = req.body;
+        user.businessName = businessName || user.businessName;
+        user.email = email || user.email;
+        user.phone = phone || user.phone;
+
+        await user.save();
+        res.status(200).json({
+            message: 'Perfil atualizado com sucesso.',
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                businessName: user.businessName,
+                phone: user.phone,
+            }
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Erro no servidor.', error: error.message });
     }
 };
 
