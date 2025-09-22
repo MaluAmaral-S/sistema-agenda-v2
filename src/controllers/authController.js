@@ -141,6 +141,20 @@ exports.logout = (req, res) => {
   res.status(200).json({ status: 'success' });
 };
 
+exports.completeOnboarding = async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.id);
+    if (!user) {
+      return res.status(404).json({ message: 'Usuário não encontrado.' });
+    }
+    user.onboardingCompleted = true;
+    await user.save();
+    res.status(200).json({ message: 'Onboarding concluído com sucesso.' });
+  } catch (error) {
+    res.status(500).json({ message: 'Erro no servidor.', error: error.message });
+  }
+};
+
 exports.verifyResetCode = async (req, res) => {
     try {
         const { token, code } = req.body;
