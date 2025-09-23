@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Label } from "@/components/ui/label";
 
 const Account = () => {
-  const { user, setUser } = useAuth();
+  const { user, updateUser } = useAuth();
 
   const [profileData, setProfileData] = useState({
     name: "",
@@ -49,7 +49,7 @@ const Account = () => {
 
     try {
       const response = await apiRequest.patch("/auth/profile", profileData);
-      setUser(prevUser => ({...prevUser, ...response.user}));
+      updateUser(response.user);
       toast.success("Informações do perfil atualizadas com sucesso!");
     } catch (error) {
       console.error("Erro ao atualizar o perfil:", error);
