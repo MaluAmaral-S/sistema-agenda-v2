@@ -5,6 +5,7 @@ import LoadingSpinner from "../components/common/LoadingSpinner";
 import BusinessHours from "./BusinessHours";
 import Servicos from "./Services";
 import Appointments from "./Appointments";
+import Account from "./Account";
 import Header from "../components/layout/Header"; // Import the new Header
 import { apiRequest } from "../services/api";
 import {
@@ -173,6 +174,7 @@ const Dashboard = () => {
         {activeTab === "servicos" && <Servicos />}
         {activeTab === "horarios" && <BusinessHours />}
         {activeTab === "agendamentos" && <Appointments />}
+        {activeTab === "conta" && <Account />}
       </main>
     </div>
   );

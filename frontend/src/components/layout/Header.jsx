@@ -21,6 +21,7 @@ const Header = ({ activeTab, setActiveTab }) => {
     { id: "servicos", label: "Serviços" },
     { id: "horarios", label: "Horários" },
     { id: "agendamentos", label: "Agendamentos" },
+    { id: "conta", label: "Minha Conta" },
   ];
 
   const handleLogout = () => {

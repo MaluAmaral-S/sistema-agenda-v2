@@ -141,10 +141,15 @@ exports.updateProfile = async (req, res) => {
             return res.status(404).json({ message: 'Usuário não encontrado.' });
         }
 
-        const { businessName, email, phone } = req.body;
+        const { name, businessName, email, phone, password } = req.body;
+        user.name = name || user.name;
         user.businessName = businessName || user.businessName;
         user.email = email || user.email;
         user.phone = phone || user.phone;
+
+        if (password) {
+            user.password = password;
+        }
 
         await user.save();
         res.status(200).json({
