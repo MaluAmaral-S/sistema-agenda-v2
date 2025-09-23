@@ -4,86 +4,110 @@ import { apiRequest } from "../services/api";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
 const Account = () => {
   const { user, setUser } = useAuth();
-  const [formData, setFormData] = useState({
+
+  const [profileData, setProfileData] = useState({
     name: "",
     businessName: "",
     email: "",
     phone: "",
+  });
+  const [passwordData, setPasswordData] = useState({
     password: "",
     confirmPassword: "",
   });
-  const [loading, setLoading] = useState(false);
+
+  const [profileLoading, setProfileLoading] = useState(false);
+  const [passwordLoading, setPasswordLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
-      setFormData({
+      setProfileData({
         name: user.name || "",
         businessName: user.businessName || "",
         email: user.email || "",
         phone: user.phone || "",
-        password: "",
-        confirmPassword: "",
       });
     }
   }, [user]);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
+  const handleProfileChange = (e) => {
+    setProfileData({ ...profileData, [e.target.id]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  const handlePasswordChange = (e) => {
+    setPasswordData({ ...passwordData, [e.target.id]: e.target.value });
+  };
 
-    if (formData.password && formData.password !== formData.confirmPassword) {
+  const handleProfileSubmit = async (e) => {
+    e.preventDefault();
+    setProfileLoading(true);
+
+    try {
+      const response = await apiRequest.patch("/auth/profile", profileData);
+      setUser(prevUser => ({...prevUser, ...response.user}));
+      toast.success("Informações do perfil atualizadas com sucesso!");
+    } catch (error) {
+      console.error("Erro ao atualizar o perfil:", error);
+      toast.error("Erro ao atualizar o perfil. Tente novamente.");
+    } finally {
+      setProfileLoading(false);
+    }
+  };
+
+  const handlePasswordSubmit = async (e) => {
+    e.preventDefault();
+    setPasswordLoading(true);
+
+    if (passwordData.password.length < 6) {
+      toast.error("A nova senha deve ter pelo menos 6 caracteres.");
+      setPasswordLoading(false);
+      return;
+    }
+
+    if (passwordData.password !== passwordData.confirmPassword) {
       toast.error("As senhas não coincidem.");
-      setLoading(false);
+      setPasswordLoading(false);
       return;
     }
 
     try {
-      const { confirmPassword, ...updateData } = formData;
-      if (!updateData.password) {
-        delete updateData.password;
-      }
-
-      const response = await apiRequest.patch("/auth/profile", updateData);
-
-      setUser(prevUser => ({...prevUser, ...response.user}));
-
-      toast.success("Informações da conta atualizadas com sucesso!");
+      await apiRequest.patch("/auth/profile", { password: passwordData.password });
+      toast.success("Senha atualizada com sucesso!");
     } catch (error) {
-      console.error("Erro ao atualizar a conta:", error);
-      toast.error("Erro ao atualizar a conta. Tente novamente.");
+      console.error("Erro ao atualizar a senha:", error);
+      toast.error("Erro ao atualizar a senha. Tente novamente.");
     } finally {
-      setLoading(false);
-      setFormData(prev => ({...prev, password: '', confirmPassword: ''}));
+      setPasswordLoading(false);
+      setPasswordData({ password: "", confirmPassword: "" });
     }
   };
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8">
+    <div className="px-4 sm:px-6 lg:px-8 space-y-8">
       <Card className="max-w-2xl mx-auto">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-gray-800">
-            Gerenciamento da Conta
+            Informações do Perfil
           </CardTitle>
+          <CardDescription>
+            Atualize os dados da sua empresa e contato.
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleProfileSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label htmlFor="name">Nome do Responsável</Label>
                 <Input
                   id="name"
                   type="text"
-                  value={formData.name}
-                  onChange={handleChange}
+                  value={profileData.name}
+                  onChange={handleProfileChange}
                   placeholder="Seu nome"
                 />
               </div>
@@ -92,8 +116,8 @@ const Account = () => {
                 <Input
                   id="businessName"
                   type="text"
-                  value={formData.businessName}
-                  onChange={handleChange}
+                  value={profileData.businessName}
+                  onChange={handleProfileChange}
                   placeholder="Nome do seu negócio"
                 />
               </div>
@@ -103,8 +127,8 @@ const Account = () => {
               <Input
                 id="email"
                 type="email"
-                value={formData.email}
-                onChange={handleChange}
+                value={profileData.email}
+                onChange={handleProfileChange}
                 placeholder="seu@email.com"
               />
             </div>
@@ -113,41 +137,56 @@ const Account = () => {
               <Input
                 id="phone"
                 type="tel"
-                value={formData.phone}
-                onChange={handleChange}
+                value={profileData.phone}
+                onChange={handleProfileChange}
                 placeholder="(XX) XXXXX-XXXX"
               />
             </div>
-            <div className="border-t pt-6 space-y-6">
-                 <p className="text-sm text-gray-600">
-                    Deixe os campos de senha em branco para não a alterar.
-                  </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="password">Nova Senha</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    placeholder="••••••••"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="confirmPassword">Confirmar Nova Senha</Label>
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    placeholder="••••••••"
-                  />
-                </div>
+            <div className="flex justify-end">
+              <Button type="submit" disabled={profileLoading} className="bg-purple-600 hover:bg-purple-700">
+                {profileLoading ? "Salvando..." : "Salvar Alterações"}
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+
+      <Card className="max-w-2xl mx-auto">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold text-gray-800">
+            Alterar Senha
+          </CardTitle>
+           <CardDescription>
+            Escolha uma senha forte para manter sua conta segura.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handlePasswordSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="password">Nova Senha</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={passwordData.password}
+                  onChange={handlePasswordChange}
+                  placeholder="••••••••"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirmar Nova Senha</Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  value={passwordData.confirmPassword}
+                  onChange={handlePasswordChange}
+                  placeholder="••••••••"
+                />
               </div>
             </div>
             <div className="flex justify-end">
-              <Button type="submit" disabled={loading} className="bg-purple-600 hover:bg-purple-700">
-                {loading ? "Salvando..." : "Salvar Alterações"}
+              <Button type="submit" disabled={passwordLoading} className="bg-purple-600 hover:bg-purple-700">
+                {passwordLoading ? "Salvando..." : "Alterar Senha"}
               </Button>
             </div>
           </form>
