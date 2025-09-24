@@ -60,12 +60,9 @@ const Plans = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-8">
       <div className="max-w-7xl mx-auto">
-      <button onClick={() => navigate("/dashboard")} className="flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 mb-8">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          Voltar para o Dashboard
-        </button>
+      <Button onClick={() => navigate("/dashboard")} variant="outline" className="mb-8">
+        Voltar ao painel
+      </Button>
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
             Planos flexíveis para o seu negócio
