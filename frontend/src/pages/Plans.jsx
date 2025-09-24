@@ -4,6 +4,12 @@ import { Button } from '@/components/ui/button';
 import { CheckCircle, Zap, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+const metallicGradients = {
+  Bronze: "bg-gradient-to-tr from-[#a97142] via-[#e8b38a] to-[#a97142]",
+  Prata: "bg-gradient-to-tr from-[#c0c0c0] via-[#f0f0f0] to-[#c0c0c0]",
+  Gold: "bg-gradient-to-tr from-[#d4af37] via-[#f9f2d0] to-[#d4af37]",
+};
+
 const plans = [
   {
     name: "Bronze",
@@ -16,6 +22,7 @@ const plans = [
     buttonText: "Assinar Agora",
     variant: "outline",
     Icon: Zap,
+    gradient: metallicGradients.Bronze,
   },
   {
     name: "Prata",
@@ -30,6 +37,7 @@ const plans = [
     variant: "default",
     Icon: Star,
     popular: true,
+    gradient: metallicGradients.Prata,
   },
   {
     name: "Gold",
@@ -43,6 +51,7 @@ const plans = [
     buttonText: "Entrar em Contato",
     variant: "outline",
     Icon: CheckCircle,
+    gradient: metallicGradients.Gold,
   },
 ];
 
@@ -68,7 +77,7 @@ const Plans = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
           {plans.map((plan) => (
-            <Card key={plan.name} className={`flex flex-col rounded-xl shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 ${plan.popular ? 'border-purple-600 border-2' : 'border-gray-200'}`}>
+            <Card key={plan.name} className={`flex flex-col rounded-xl shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 ${plan.popular ? 'border-purple-600 border-2' : ''} ${plan.gradient}`}>
               {plan.popular && (
                 <div className="absolute top-0 right-4 -mt-4">
                   <div className="bg-purple-600 text-white text-xs font-semibold py-1 px-3 rounded-full uppercase tracking-wider shadow-md">
@@ -77,25 +86,25 @@ const Plans = () => {
                 </div>
               )}
               <CardHeader className="text-center">
-                <plan.Icon className="w-10 h-10 mx-auto mb-4 text-purple-600" />
-                <h3 className="text-2xl font-bold">{plan.name}</h3>
+                <plan.Icon className="w-10 h-10 mx-auto mb-4 text-white" />
+                <h3 className="text-2xl font-bold text-white" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>{plan.name}</h3>
               </CardHeader>
               <CardContent className="flex-grow flex flex-col justify-between p-6">
                 <div>
-                  <p className="text-4xl font-extrabold text-center text-gray-900 mb-6">
+                  <p className="text-4xl font-extrabold text-center text-white mb-6" style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>
                     {plan.price}
-                    {plan.price.startsWith("R$") && <span className="text-lg font-medium text-gray-500">/mês</span>}
+                    {plan.price.startsWith("R$") && <span className="text-lg font-medium">/mês</span>}
                   </p>
-                  <ul className="space-y-3 text-gray-600">
+                  <ul className="space-y-3 text-white">
                     {plan.features.map((feature) => (
                       <li key={feature} className="flex items-center">
-                        <CheckCircle className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" />
-                        <span>{feature}</span>
+                        <CheckCircle className="w-5 h-5 text-green-300 mr-3 flex-shrink-0" />
+                        <span style={{ textShadow: '1px 1px 2px rgba(0,0,0,0.5)' }}>{feature}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
-                <Button className="w-full mt-8" variant={plan.variant} size="lg">
+                <Button className="w-full mt-8" variant={plan.name === 'Prata' ? 'secondary' : 'outline'} size="lg">
                   {plan.buttonText}
                 </Button>
               </CardContent>
