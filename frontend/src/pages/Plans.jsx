@@ -1,106 +1,108 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { CheckCircle, Zap, Star } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+
+const plans = [
+  {
+    name: "Bronze",
+    price: "R$ 29,90",
+    features: [
+      "Até 50 agendamentos/mês",
+      "1 profissional",
+      "Suporte via e-mail",
+    ],
+    buttonText: "Assinar Agora",
+    variant: "outline",
+    Icon: Zap,
+  },
+  {
+    name: "Prata",
+    price: "R$ 59,90",
+    features: [
+      "Agendamentos ilimitados",
+      "Até 5 profissionais",
+      "Relatórios básicos",
+      "Suporte via chat",
+    ],
+    buttonText: "Assinar Agora",
+    variant: "default",
+    Icon: Star,
+    popular: true,
+  },
+  {
+    name: "Gold",
+    price: "Customizado",
+    features: [
+      "Tudo do plano Prata +",
+      "Múltiplas filiais",
+      "API para integrações",
+      "Suporte dedicado por telefone",
+    ],
+    buttonText: "Entrar em Contato",
+    variant: "outline",
+    Icon: CheckCircle,
+  },
+];
 
 const Plans = () => {
-  const isTrial = true; // Simular período de teste
-
+    const navigate = useNavigate();
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-4">Planos e Assinatura</h1>
-
-      {/* Seção: Status da Assinatura Atual */}
-      <section className="mb-12">
-        <h2 className="text-2xl font-semibold mb-4">Status da Assinatura Atual</h2>
-        <Card>
-          <CardHeader>
-            <CardTitle>{isTrial ? "Status da Conta: Período de Teste" : "Plano Bronze Ativo"}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="mb-4">
-              {isTrial
-                ? "Você tem 7 dias de acesso gratuito a todos os recursos. Escolha um plano antes do fim do teste para não perder seu acesso."
-                : "Sua assinatura renova em 24/10/2025."
-              }
-            </p>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Switch id="recurring-billing" disabled={isTrial} />
-                <Label htmlFor="recurring-billing">Cobrança Recorrente</Label>
-              </div>
-              {!isTrial && (
-                <button className="text-sm text-red-600 hover:text-red-800">
-                  Cancelar Plano
-                </button>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </section>
-
-      {/* Seção: Planos Disponíveis */}
-      <section>
-        <h2 className="text-2xl font-semibold mb-8 text-center">Escolha o Plano Ideal para Você</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {/* Card Bronze */}
-          <Card className="flex flex-col">
-            <CardHeader className="bg-gradient-to-r from-yellow-600 to-orange-400 text-white rounded-t-lg">
-              <CardTitle className="text-2xl">Plano Bronze</CardTitle>
-            </CardHeader>
-            <CardContent className="flex-grow p-6">
-              <p className="text-4xl font-bold mb-4">R$ 29,90<span className="text-lg font-normal">/mês</span></p>
-              <ul className="space-y-2 text-gray-600">
-                <li>Até 50 agendamentos/mês</li>
-                <li>1 profissional</li>
-                <li>Suporte via e-mail</li>
-              </ul>
-            </CardContent>
-            <div className="p-6 pt-0">
-              <button className="w-full bg-gray-800 text-white py-2 rounded-lg hover:bg-gray-700">Assinar</button>
-            </div>
-          </Card>
-
-          {/* Card Prata */}
-          <Card className="flex flex-col border-2 border-purple-600 relative">
-            <div className="absolute -top-4 right-4 bg-purple-600 text-white px-3 py-1 rounded-full text-sm font-semibold">Mais Popular</div>
-            <CardHeader className="bg-gradient-to-r from-gray-400 to-gray-200 text-gray-800 rounded-t-lg">
-              <CardTitle className="text-2xl">Plano Prata</CardTitle>
-            </CardHeader>
-            <CardContent className="flex-grow p-6">
-              <p className="text-4xl font-bold mb-4">R$ 59,90<span className="text-lg font-normal">/mês</span></p>
-              <ul className="space-y-2 text-gray-600">
-                <li>Agendamentos ilimitados</li>
-                <li>Até 5 profissionais</li>
-                <li>Relatórios básicos</li>
-                <li>Suporte via chat</li>
-              </ul>
-            </CardContent>
-            <div className="p-6 pt-0">
-              <button className="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700">Assinar</button>
-            </div>
-          </Card>
-
-          {/* Card Gold */}
-          <Card className="flex flex-col">
-            <CardHeader className="bg-gradient-to-r from-yellow-400 to-yellow-200 text-gray-800 rounded-t-lg">
-              <CardTitle className="text-2xl">Plano Gold</CardTitle>
-            </CardHeader>
-            <CardContent className="flex-grow p-6">
-              <p className="text-4xl font-bold mb-4">Customizado</p>
-              <ul className="space-y-2 text-gray-600">
-                <li>Tudo do plano Prata +</li>
-                <li>Múltiplas filiais</li>
-                <li>API para integrações</li>
-                <li>Suporte dedicado por telefone</li>
-              </ul>
-            </CardContent>
-            <div className="p-6 pt-0">
-              <button className="w-full bg-gray-800 text-white py-2 rounded-lg hover:bg-gray-700">Entrar em contato</button>
-            </div>
-          </Card>
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-8">
+      <div className="max-w-7xl mx-auto">
+      <button onClick={() => navigate("/dashboard")} className="flex items-center text-sm font-medium text-gray-500 hover:text-gray-700 mb-8">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          Voltar para o Dashboard
+        </button>
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
+            Planos flexíveis para o seu negócio
+          </h1>
+          <p className="mt-4 text-lg text-gray-600">
+            Escolha o plano que melhor se adapta ao seu crescimento.
+          </p>
         </div>
-      </section>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+          {plans.map((plan) => (
+            <Card key={plan.name} className={`flex flex-col rounded-xl shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2 ${plan.popular ? 'border-purple-600 border-2' : 'border-gray-200'}`}>
+              {plan.popular && (
+                <div className="absolute top-0 right-4 -mt-4">
+                  <div className="bg-purple-600 text-white text-xs font-semibold py-1 px-3 rounded-full uppercase tracking-wider shadow-md">
+                    Mais Popular
+                  </div>
+                </div>
+              )}
+              <CardHeader className="text-center">
+                <plan.Icon className="w-10 h-10 mx-auto mb-4 text-purple-600" />
+                <h3 className="text-2xl font-bold">{plan.name}</h3>
+              </CardHeader>
+              <CardContent className="flex-grow flex flex-col justify-between p-6">
+                <div>
+                  <p className="text-4xl font-extrabold text-center text-gray-900 mb-6">
+                    {plan.price}
+                    {plan.price.startsWith("R$") && <span className="text-lg font-medium text-gray-500">/mês</span>}
+                  </p>
+                  <ul className="space-y-3 text-gray-600">
+                    {plan.features.map((feature) => (
+                      <li key={feature} className="flex items-center">
+                        <CheckCircle className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <Button className="w-full mt-8" variant={plan.variant} size="lg">
+                  {plan.buttonText}
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
