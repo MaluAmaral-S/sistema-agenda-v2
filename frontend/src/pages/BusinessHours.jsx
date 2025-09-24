@@ -11,7 +11,6 @@ const BusinessHours = () => {
   const [businessHours, setBusinessHours] = useState({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState('');
 
   const daysOfWeek = [
     'Domingo',
@@ -104,23 +103,21 @@ const BusinessHours = () => {
       if (day.isOpen) {
         for (const interval of day.intervals || []) {
           if (!interval.start || !interval.end) {
-            setError(`No dia ${daysOfWeek[dayIndex]}, preencha todos os campos de horário.`);
-            return false;
+            return `No dia ${daysOfWeek[dayIndex]}, preencha todos os campos de horário.`;
           }
           if (interval.start >= interval.end) {
-            setError(`No dia ${daysOfWeek[dayIndex]}, o horário de término deve ser posterior ao de início.`);
-            return false;
+            return `No dia ${daysOfWeek[dayIndex]}, o horário de término deve ser posterior ao de início.`;
           }
         }
       }
     }
-    return true;
+    return null;
   };
 
   const saveBusinessHours = async () => {
-    setError('');
-
-    if (!validateHours()) {
+    const validationError = validateHours();
+    if (validationError) {
+      toast.error(validationError);
       return;
     }
 
@@ -130,7 +127,6 @@ const BusinessHours = () => {
       toast.success('Horários de funcionamento salvos com sucesso!');
     } catch (error) {
       toast.error(error.message || 'Erro ao salvar horários de funcionamento.');
-      setError(error.message || 'Erro ao salvar horários de funcionamento.');
     } finally {
       setSaving(false);
     }
@@ -160,16 +156,6 @@ const BusinessHours = () => {
           </div>
           <p className="text-gray-600">Configure os horários de atendimento para cada dia da semana</p>
         </div>
-
-        {/* Alerts */}
-        {error && (
-          <Alert className="mb-6 bg-red-50 border-red-200">
-            <AlertCircle className="h-4 w-4 text-red-600" />
-            <AlertDescription className="text-red-800">
-              {error}
-            </AlertDescription>
-          </Alert>
-        )}
 
         {/* Days Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

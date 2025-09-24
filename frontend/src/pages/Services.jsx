@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import { LayoutGrid, PlusCircle, List, Edit2, Trash2, AlertCircle, CheckCircle } from 'lucide-react';
+import { toast } from 'sonner';
 
 const formatarMinutosParaDuracao = (minutos) => {
     if (!minutos || minutos < 1) return '00:00';
@@ -24,8 +25,6 @@ const Services = () => {
     const [services, setServices] = useState([]);
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
 
     useEffect(() => {
         loadServices();
@@ -37,7 +36,7 @@ const Services = () => {
             const data = await apiRequest.get('/servicos');
             setServices(data);
         } catch (err) {
-            setError(err.message || 'Não foi possível carregar os serviços.');
+            toast.error(err.message || 'Não foi possível carregar os serviços.');
         } finally {
             setLoading(false);
         }
@@ -46,8 +45,6 @@ const Services = () => {
     const handleCreateService = async (e) => {
         e.preventDefault();
         setSubmitting(true);
-        setError('');
-        setSuccess('');
 
         const formData = new FormData(e.target);
         const duracaoEmTempo = formData.get('duracao');
@@ -60,19 +57,18 @@ const Services = () => {
         };
 
         if (!serviceData.nome || serviceData.duracao_minutos <= 0) {
-            setError("Nome do serviço e duração são obrigatórios.");
+            toast.error("Nome do serviço e duração são obrigatórios.");
             setSubmitting(false);
             return;
         }
 
         try {
             await apiRequest.post('/servicos', serviceData);
-            setSuccess('Serviço adicionado com sucesso!');
+            toast.success('Serviço adicionado com sucesso!');
             e.target.reset();
             loadServices();
-            setTimeout(() => setSuccess(''), 3000);
         } catch (err) {
-            setError(err.message || 'Erro ao adicionar serviço.');
+            toast.error(err.message || 'Erro ao adicionar serviço.');
         } finally {
             setSubmitting(false);
         }
@@ -83,11 +79,10 @@ const Services = () => {
 
         try {
             await apiRequest.delete(`/servicos/${serviceId}`);
-            setSuccess('Serviço apagado com sucesso!');
+            toast.success('Serviço apagado com sucesso!');
             loadServices();
-            setTimeout(() => setSuccess(''), 3000);
         } catch (err) {
-            setError(err.message || 'Erro ao apagar serviço.');
+            toast.error(err.message || 'Erro ao apagar serviço.');
         }
     };
 
@@ -172,19 +167,6 @@ const Services = () => {
                     )}
                 </div>
             </div>
-            
-            {error && (
-              <Alert variant="destructive" className="mt-4">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-            {success && (
-              <Alert className="mt-4 bg-green-50 border-green-200 text-green-800">
-                <CheckCircle className="h-4 w-4" />
-                <AlertDescription>{success}</AlertDescription>
-              </Alert>
-            )}
         </div>
     );
 };

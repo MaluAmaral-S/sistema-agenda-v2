@@ -16,6 +16,7 @@ import {
   AlertTriangle,
   CheckCircle,
 } from "lucide-react";
+import { toast } from "sonner";
 
 const Booking = () => {
   const { businessSlug } = useParams();
@@ -123,6 +124,7 @@ const Booking = () => {
 
     } catch (error) {
       console.error("Erro ao carregar horários disponíveis:", error);
+      toast.error("Não foi possível carregar os horários. Por favor, tente selecionar outra data.");
       setAvailableSlots([]);
     } finally {
       setIsSlotsLoading(false);
@@ -144,7 +146,7 @@ const Booking = () => {
       setBookingSuccess(true);
     } catch (error) {
       console.error("Erro ao criar agendamento:", error);
-      alert("Erro ao criar agendamento. Tente novamente.");
+      toast.error("Erro ao criar agendamento. Por favor, tente novamente.");
     }
   };
 

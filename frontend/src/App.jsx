@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/common/ProtectedRoute';
-import LoadingSpinner from './components/common/LoadingSpinner';
+import { Toaster } from 'sonner';
 
 // Páginas
 import Home from './pages/Home';
@@ -23,6 +23,7 @@ function App() {
   console.log("App.jsx carregado!");
   return (
     <AuthProvider>
+      <Toaster richColors position="top-right" />
       <Router>
         <div className="min-h-screen bg-gray-50">
           <Routes>

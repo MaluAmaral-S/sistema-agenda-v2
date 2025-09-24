@@ -131,6 +131,7 @@ const Login = () => {
     try {
       const { confirmPassword, ...dataToSend } = registerData;
       await register(dataToSend);
+      toast.success("Conta criada com sucesso! Redirecionando...");
       // A navegação será tratada pelo useEffect
     } catch (error) {
       toast.error(error.message || 'Ocorreu um erro ao registrar. Tente novamente.', {
